@@ -22,7 +22,7 @@ export default function AppointmentsFolderPage() {
       </div>
 
       {/* Centered Showcase Section */}
-      <div className="relative group z-10">
+      <div className="relative group z-10 mt-32 md:mt-40">
         <div className="absolute -inset-20 bg-gradient-to-tr from-purple-500/10 via-transparent to-indigo-500/10 rounded-full blur-3xl opacity-80" />
         <InteractiveFolder 
           size={3.5} 
