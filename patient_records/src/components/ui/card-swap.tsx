@@ -108,6 +108,114 @@ export const CardSwap: React.FC<CardSwapProps> = ({
   const intervalRef = useRef<number>(0);
   const container = useRef<HTMLDivElement>(null);
 
+  const swapNext = React.useCallback(() => {
+    if (order.current.length < 2) return;
+    if (tlRef.current && tlRef.current.isActive()) return; // prevent spam click
+
+    const [front, ...rest] = order.current;
+    const elFront = refs[front].current;
+    if (!elFront) return;
+
+    const tl = gsap.timeline();
+    tlRef.current = tl;
+
+    tl.to(elFront, {
+      y: '+=500',
+      duration: config.durDrop,
+      ease: config.ease
+    });
+
+    tl.addLabel('promote', `-=${config.durDrop * config.promoteOverlap}`);
+    rest.forEach((idx, i) => {
+      const el = refs[idx].current;
+      if (!el) return;
+      const slot = makeSlot(i, cardDistance, verticalDistance, refs.length);
+      tl.set(el, { zIndex: slot.zIndex }, 'promote');
+      tl.to(
+        el,
+        {
+          x: slot.x,
+          y: slot.y,
+          z: slot.z,
+          duration: config.durMove,
+          ease: config.ease
+        },
+        `promote+=${i * 0.15}`
+      );
+    });
+
+    const backSlot = makeSlot(refs.length - 1, cardDistance, verticalDistance, refs.length);
+    tl.addLabel('return', `promote+=${config.durMove * config.returnDelay}`);
+    tl.call(
+      () => {
+        gsap.set(elFront, { zIndex: backSlot.zIndex });
+      },
+      undefined,
+      'return'
+    );
+
+    tl.to(
+      elFront,
+      {
+        x: backSlot.x,
+        y: backSlot.y,
+        z: backSlot.z,
+        duration: config.durReturn,
+        ease: config.ease
+      },
+      'return'
+    );
+
+    tl.call(() => {
+      order.current = [...rest, front];
+    });
+  }, [cardDistance, verticalDistance, config, refs]);
+
+  const swapPrev = React.useCallback(() => {
+    if (order.current.length < 2) return;
+    if (tlRef.current && tlRef.current.isActive()) return;
+
+    const back = order.current[order.current.length - 1];
+    const rest = order.current.slice(0, -1);
+    const elBack = refs[back].current;
+    if (!elBack) return;
+
+    const tl = gsap.timeline();
+    tlRef.current = tl;
+
+    tl.to(elBack, {
+      y: '+=500',
+      duration: config.durDrop,
+      ease: config.ease
+    });
+
+    tl.addLabel('promote', `-=${config.durDrop * config.promoteOverlap}`);
+    
+    // The new order will be [back, ...rest]. 
+    // We animate all the 'rest' cards backward by 1 slot.
+    rest.forEach((idx, i) => {
+      const el = refs[idx].current;
+      if (!el) return;
+      const newIndex = i + 1; // Since 'back' will be at 0
+      const slot = makeSlot(newIndex, cardDistance, verticalDistance, refs.length);
+      tl.set(el, { zIndex: slot.zIndex }, 'promote');
+      tl.to(el, { x: slot.x, y: slot.y, z: slot.z, duration: config.durMove, ease: config.ease }, `promote+=${i * 0.15}`);
+    });
+
+    // The 'back' card comes to the front (slot 0)
+    const frontSlot = makeSlot(0, cardDistance, verticalDistance, refs.length);
+    tl.addLabel('return', `promote+=${config.durMove * config.returnDelay}`);
+    tl.call(() => {
+      gsap.set(elBack, { zIndex: frontSlot.zIndex });
+    }, undefined, 'return');
+
+    tl.to(elBack, { x: frontSlot.x, y: frontSlot.y, z: frontSlot.z, duration: config.durReturn, ease: config.ease }, 'return');
+
+    tl.call(() => {
+      order.current = [back, ...rest];
+    });
+  }, [cardDistance, verticalDistance, config, refs]);
+
   useEffect(() => {
     const total = refs.length;
     refs.forEach((r, i) => {
@@ -116,68 +224,7 @@ export const CardSwap: React.FC<CardSwapProps> = ({
       }
     });
 
-    const swap = () => {
-      if (order.current.length < 2) return;
-      const [front, ...rest] = order.current;
-      const elFront = refs[front].current;
-      if (!elFront) return;
-
-      const tl = gsap.timeline();
-      tlRef.current = tl;
-
-      tl.to(elFront, {
-        y: '+=500',
-        duration: config.durDrop,
-        ease: config.ease
-      });
-
-      tl.addLabel('promote', `-=${config.durDrop * config.promoteOverlap}`);
-      rest.forEach((idx, i) => {
-        const el = refs[idx].current;
-        if (!el) return;
-        const slot = makeSlot(i, cardDistance, verticalDistance, refs.length);
-        tl.set(el, { zIndex: slot.zIndex }, 'promote');
-        tl.to(
-          el,
-          {
-            x: slot.x,
-            y: slot.y,
-            z: slot.z,
-            duration: config.durMove,
-            ease: config.ease
-          },
-          `promote+=${i * 0.15}`
-        );
-      });
-
-      const backSlot = makeSlot(refs.length - 1, cardDistance, verticalDistance, refs.length);
-      tl.addLabel('return', `promote+=${config.durMove * config.returnDelay}`);
-      tl.call(
-        () => {
-          gsap.set(elFront, { zIndex: backSlot.zIndex });
-        },
-        undefined,
-        'return'
-      );
-
-      tl.to(
-        elFront,
-        {
-          x: backSlot.x,
-          y: backSlot.y,
-          z: backSlot.z,
-          duration: config.durReturn,
-          ease: config.ease
-        },
-        'return'
-      );
-
-      tl.call(() => {
-        order.current = [...rest, front];
-      });
-    };
-
-    intervalRef.current = window.setInterval(swap, delay);
+    intervalRef.current = window.setInterval(swapNext, delay);
 
     if (pauseOnHover && container.current) {
       const node = container.current;
@@ -186,8 +233,10 @@ export const CardSwap: React.FC<CardSwapProps> = ({
         clearInterval(intervalRef.current);
       };
       const resume = () => {
-        tlRef.current?.play();
-        intervalRef.current = window.setInterval(swap, delay);
+        if (!tlRef.current?.isActive()) {
+            tlRef.current?.play();
+        }
+        intervalRef.current = window.setInterval(swapNext, delay);
       };
       node.addEventListener('mouseenter', pause);
       node.addEventListener('mouseleave', resume);
@@ -199,7 +248,7 @@ export const CardSwap: React.FC<CardSwapProps> = ({
     }
 
     return () => clearInterval(intervalRef.current);
-  }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing, refs]);
+  }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing, refs, swapNext]);
 
   const rendered = childArr.map((child, i) =>
     isValidElement<CardProps>(child)
@@ -216,14 +265,32 @@ export const CardSwap: React.FC<CardSwapProps> = ({
   );
 
   return (
-    <div
-      ref={container}
-      className="relative perspective-[1200px] transform-gpu"
-      style={{ width, height }}
-    >
-      <div className="absolute inset-0 [transform-style:preserve-3d]">
-        {rendered}
+    <div className="relative group/cardswap flex items-center justify-center">
+      {/* Prev Button */}
+      <button 
+        onClick={swapPrev}
+        className="absolute -left-16 z-50 p-3 rounded-full bg-white/5 border border-white/10 text-white/50 hover:bg-purple-500/20 hover:text-white hover:border-purple-500/50 transition-all opacity-0 group-hover/cardswap:opacity-100 shadow-[0_0_15px_rgba(147,51,234,0)] hover:shadow-[0_0_15px_rgba(147,51,234,0.3)] backdrop-blur-sm"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+
+      <div
+        ref={container}
+        className="relative perspective-[1200px] transform-gpu"
+        style={{ width, height }}
+      >
+        <div className="absolute inset-0 [transform-style:preserve-3d]">
+          {rendered}
+        </div>
       </div>
+
+      {/* Next Button */}
+      <button 
+        onClick={swapNext}
+        className="absolute -right-16 z-50 p-3 rounded-full bg-white/5 border border-white/10 text-white/50 hover:bg-purple-500/20 hover:text-white hover:border-purple-500/50 transition-all opacity-0 group-hover/cardswap:opacity-100 shadow-[0_0_15px_rgba(147,51,234,0)] hover:shadow-[0_0_15px_rgba(147,51,234,0.3)] backdrop-blur-sm"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
     </div>
   );
 };
