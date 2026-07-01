@@ -29,6 +29,30 @@ export default function PatientRecordsPage() {
       title: "Michael Brown",
       description: "Emergency - Admitted 2 hours ago. Awaiting lab results.",
       image: "https://images.unsplash.com/photo-1581056771107-24ca5f033842?q=80&w=800&auto=format&fit=crop"
+    },
+    {
+      id: 5,
+      title: "Jessica Taylor",
+      description: "Pediatrics - 6 year old female. Monitoring fever and respiratory distress.",
+      image: "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?q=80&w=800&auto=format&fit=crop"
+    },
+    {
+      id: 6,
+      title: "David Wilson",
+      description: "Neurology - Scheduled for MRI scan at 4:30 PM.",
+      image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800&auto=format&fit=crop"
+    },
+    {
+      id: 7,
+      title: "Amanda Garcia",
+      description: "Maternity - Ward 2. Expecting mother, currently in first stage of labor.",
+      image: "https://images.unsplash.com/photo-1638202993928-7267aad84c31?q=80&w=800&auto=format&fit=crop"
+    },
+    {
+      id: 8,
+      title: "James Miller",
+      description: "Cardiology - Routine ECG evaluation. Resting heart rate elevated.",
+      image: "https://images.unsplash.com/photo-1527613426441-4da17471b66d?q=80&w=800&auto=format&fit=crop"
     }
   ];
 
