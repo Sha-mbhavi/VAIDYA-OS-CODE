@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'; // Assuming you have a utility for class names
 interface HeroProps extends React.HTMLAttributes<HTMLDivElement> {
   title: React.ReactNode;
   subtitle: string;
-  images: { src: string; alt: string; }[];
+  images: { src: string; alt: string; label?: string }[];
 }
 
 // --- HERO SECTION COMPONENT ---
@@ -98,6 +98,11 @@ export const HeroSection = React.forwardRef<HTMLDivElement, HeroProps>(
                       alt={image.alt}
                       className="object-cover w-full h-full rounded-3xl border-2 border-foreground/10 shadow-2xl"
                     />
+                    {image.label && (
+                      <div className="absolute bottom-6 left-4 right-4 bg-background/80 backdrop-blur-md px-4 py-3 rounded-xl border border-white/10 text-center font-semibold text-sm md:text-base shadow-xl">
+                        {image.label}
+                      </div>
+                    )}
                   </div>
                 );
               })}
