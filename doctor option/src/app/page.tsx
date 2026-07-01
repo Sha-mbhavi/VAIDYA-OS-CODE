@@ -65,9 +65,7 @@ function SplineSceneBasic() {
             AI Voice Assistant
           </h2>
           <p className="mt-6 text-neutral-300 text-lg max-w-lg leading-relaxed">
-            An intelligent ambient scribe that listens to patient problems in real-time. 
-            It automatically captures symptoms, asks relevant follow-up questions, 
-            and generates structured clinical notes so you can focus on care.
+            Your symptoms are more than words — they are signals. Our AI listens, understands, and guides you toward better health
           </p>
         </div>
 
