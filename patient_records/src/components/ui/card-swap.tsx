@@ -119,8 +119,12 @@ export const CardSwap: React.FC<CardSwapProps> = ({
     const tl = gsap.timeline();
     tlRef.current = tl;
 
+    // Slide out to the right with 3D rotation
     tl.to(elFront, {
-      y: '+=500',
+      x: '+=600',
+      rotationY: 45,
+      rotationZ: 10,
+      scale: 0.9,
       duration: config.durDrop,
       ease: config.ease
     });
@@ -154,12 +158,16 @@ export const CardSwap: React.FC<CardSwapProps> = ({
       'return'
     );
 
+    // Slide back into the stack from the back
     tl.to(
       elFront,
       {
         x: backSlot.x,
         y: backSlot.y,
         z: backSlot.z,
+        rotationY: 0,
+        rotationZ: 0,
+        scale: 1,
         duration: config.durReturn,
         ease: config.ease
       },
@@ -183,33 +191,36 @@ export const CardSwap: React.FC<CardSwapProps> = ({
     const tl = gsap.timeline();
     tlRef.current = tl;
 
+    // The back card slides out to the left with 3D rotation
     tl.to(elBack, {
-      y: '+=500',
+      x: '-=600',
+      rotationY: -45,
+      rotationZ: -10,
+      scale: 0.9,
       duration: config.durDrop,
       ease: config.ease
     });
 
     tl.addLabel('promote', `-=${config.durDrop * config.promoteOverlap}`);
     
-    // The new order will be [back, ...rest]. 
-    // We animate all the 'rest' cards backward by 1 slot.
+    // Animate rest of cards backward
     rest.forEach((idx, i) => {
       const el = refs[idx].current;
       if (!el) return;
-      const newIndex = i + 1; // Since 'back' will be at 0
+      const newIndex = i + 1;
       const slot = makeSlot(newIndex, cardDistance, verticalDistance, refs.length);
       tl.set(el, { zIndex: slot.zIndex }, 'promote');
       tl.to(el, { x: slot.x, y: slot.y, z: slot.z, duration: config.durMove, ease: config.ease }, `promote+=${i * 0.15}`);
     });
 
-    // The 'back' card comes to the front (slot 0)
     const frontSlot = makeSlot(0, cardDistance, verticalDistance, refs.length);
     tl.addLabel('return', `promote+=${config.durMove * config.returnDelay}`);
     tl.call(() => {
       gsap.set(elBack, { zIndex: frontSlot.zIndex });
     }, undefined, 'return');
 
-    tl.to(elBack, { x: frontSlot.x, y: frontSlot.y, z: frontSlot.z, duration: config.durReturn, ease: config.ease }, 'return');
+    // Slide back into the front position
+    tl.to(elBack, { x: frontSlot.x, y: frontSlot.y, z: frontSlot.z, rotationY: 0, rotationZ: 0, scale: 1, duration: config.durReturn, ease: config.ease }, 'return');
 
     tl.call(() => {
       order.current = [back, ...rest];
