@@ -34,7 +34,7 @@ export default function Home() {
 
   const title = (
     <>
-      Manage your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">appointments & patients</span> in correct order way ...
+      Manage your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">appointments & patients</span>
     </>
   );
 
