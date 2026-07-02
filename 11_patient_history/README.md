@@ -1,3 +1,7 @@
+# Patient History
+
+When doctor login him and come to dashboard section it will see the doctor option on top when doctor click on that option the doctor dashboard will open in which another and last option is patient history.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
