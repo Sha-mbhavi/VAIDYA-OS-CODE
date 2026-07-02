@@ -1,3 +1,7 @@
+# Total Appointments of Patients
+
+When doctor login him and come to dashboard section it will see the doctor option on top when doctor click on that option thie doctor dashboard will open in which one of the option is total appointment of patient.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
