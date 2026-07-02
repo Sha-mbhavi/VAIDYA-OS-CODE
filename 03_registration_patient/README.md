@@ -1,3 +1,7 @@
+# Registration Patient
+
+When dashboard open the person see the top the patient option when click on it the three option will come in which one of them is regitration patient option.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
