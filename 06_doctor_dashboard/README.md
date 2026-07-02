@@ -1,3 +1,7 @@
+# Doctor Dashboard
+
+When doctor login him and come to dashboard section it will see the doctor option on top when doctor click on that option thie doctor dashboard will open in which five option will be there which are total appointments of patient , new patient , critical cases , emergency case , emergency case , patient history  thses option are there ...
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
