@@ -1,3 +1,7 @@
+# AI Voice
+
+When some person open the dashboard top side AI voice option will there when person click on it it will open.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
